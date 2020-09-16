@@ -1,0 +1,32 @@
+version: "3.7"
+networks:
+  net:
+    external: true
+
+services:
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: jwilder/nginx-proxy:latest
+    restart: always
+    networks:
+      - net
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - type: bind
+        source: /srv/nginx-proxy/html
+        target: /usr/share/nginx/html
+      - type: bind
+        source: /srv/nginx-proxy/dhparam
+        target: /etc/nginx/dhparam
+      - type: bind
+        source: /srv/nginx-proxy/vhost
+        target: /etc/nginx/vhost.d
+      - type: bind
+        source: /srv/nginx-proxy/certs
+        target: /etc/nginx/certs
+      - type: bind
+        source: /run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true

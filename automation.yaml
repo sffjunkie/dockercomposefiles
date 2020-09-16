@@ -1,0 +1,88 @@
+version: "3.7"
+
+networks:
+  net:
+    external: true
+
+volumes:
+  homeassistant:
+    external: true
+
+services:
+  homeassistant-core:
+    container_name: homeassistant-core
+    image: homeassistant/home-assistant:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/homeassistant
+        target: /config
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+    devices:
+      - "/dev/serial/by-id/usb-RFXCOM_RFXtrx433_06VTMY2H-if00-port0:/rfxtrx-usb"
+#      - "/dev/serial/by-id/usb-0658_0200-if00:/zwavestick-usb"
+#      - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/zigbeestick-usb"
+
+  nodered:
+    container_name: nodered
+    image: nodered/node-red:latest-12
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/nodered/data
+        target: /data
+    ports:
+      - "1880:1880"
+
+  deconz:
+    container_name: deconz
+    image: marthoc/deconz:latest
+    restart: unless-stopped
+    network_mode: host
+    command: --upnp=0
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10443:10443"
+    volumes:
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime:ro
+      - type: bind
+        source: /srv/deconz
+        target: /root/.local/share/dresden-elektronik/deCONZ
+    devices:
+      - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/dev/ttyUSB0"
+    environment:
+      - DECONZ_WEB_PORT=10000
+      - DECONZ_WS_PORT=10443
+      - DECONZ_VNC_MODE=1
+      - DECONZ_VNC_PORT=10001
+    env_file:
+      - .deconz-env
+
+  openzwave:
+    container_name: openzwave
+    image: openzwave/ozwdaemon:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/openzwave
+        target: /opt/ozw/config
+    devices:
+      - "/dev/serial/by-id/usb-0658_0200-if00:/dev/ttyUSB0"
+    environment:
+      - MQTT_SERVER:10.44.0.3
+      - USB_PATH:/dev/ttyUSB0
+    ports:
+      - "1983:1983"
+    security_opt:
+      - seccomp:unconfined
+    env_file:
+      - .openzwave-env

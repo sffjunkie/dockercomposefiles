@@ -4,10 +4,6 @@ networks:
   net:
     external: true
 
-volumes:
-  homeassistant:
-    external: true
-
 services:
   homeassistant-core:
     container_name: homeassistant-core

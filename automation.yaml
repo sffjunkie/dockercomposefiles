@@ -1,13 +1,6 @@
-version: "3.7"
-
-networks:
-  net:
-    external: true
-
-services:
-  homeassistant-core:
+  homeassistant:
     container_name: homeassistant-core
-    image: homeassistant/home-assistant:latest
+    image: docker.io/homeassistant/home-assistant:latest
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -18,14 +11,22 @@ services:
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
+      - type: bind
+        source: /media/homeassistant/
+        target: /media
     devices:
       - "/dev/serial/by-id/usb-RFXCOM_RFXtrx433_06VTMY2H-if00-port0:/rfxtrx-usb"
 #      - "/dev/serial/by-id/usb-0658_0200-if00:/zwavestick-usb"
 #      - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/zigbeestick-usb"
+    logging:
+      driver: syslog
+      options:
+        tag: "{{.Name}}"
+        syslog-address: "udp://10.44.0.3:514"
 
   nodered:
     container_name: nodered
-    image: nodered/node-red:latest-12
+    image: docker.io/nodered/node-red:latest-12
     restart: unless-stopped
     network_mode: host
     volumes:
@@ -37,10 +38,10 @@ services:
 
   deconz:
     container_name: deconz
-    image: marthoc/deconz:latest
+    image: docker.io/marthoc/deconz:latest
     restart: unless-stopped
     network_mode: host
-    command: --upnp=0
+#    command: --upnp=0
     ports:
       - "10000:10000"
       - "10001:10001"
@@ -54,17 +55,12 @@ services:
         target: /root/.local/share/dresden-elektronik/deCONZ
     devices:
       - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/dev/ttyUSB0"
-    environment:
-      - DECONZ_WEB_PORT=10000
-      - DECONZ_WS_PORT=10443
-      - DECONZ_VNC_MODE=1
-      - DECONZ_VNC_PORT=10001
     env_file:
       - .deconz-env
 
   openzwave:
     container_name: openzwave
-    image: openzwave/ozwdaemon:latest
+    image: docker.io/openzwave/ozwdaemon:latest
     restart: unless-stopped
     network_mode: host
     volumes:

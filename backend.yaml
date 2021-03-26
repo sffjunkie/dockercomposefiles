@@ -1,29 +1,41 @@
-version: "3.7"
-networks:
-  net:
-    external: true
-
-services:
   # region Container Management
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:latest
+    image: docker.io/portainer/portainer-ce:latest
     network_mode: host
+    command: -H unix:///var/run/docker.sock
+    privileged: true
     ports:
       - "9000:9000"
       - "8000:8000"
     volumes:
       - type: bind
-        source: /run/docker.sock
-        target: /run/docker.sock
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
       - type: bind
-        source: /srv/portainer
-        target: /data
+        source: /srv/portainer/
+        target: /data/
   # end region
 
+  samba:
+    container_name: samba
+    image: docker.io/dperson/samba:latest
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: /srv/samba/
+        target: /etc/samba/
+    env_file:
+      - .timezone-env
+      - .samba-env
+    ports:
+      - "139:139"
+      - "445:445"
+
   webserver:
-    image: nginx:latest
     container_name: webserver
+    image: docker.io/nginx:latest
     restart: unless-stopped
     networks:
       - net
@@ -37,8 +49,8 @@ services:
 
   # region Web Apps
   nextcloud:
-    image: nextcloud:latest
     container_name: nextcloud
+    image: docker.io/nextcloud:latest
     restart: unless-stopped
     networks:
       - net
@@ -51,34 +63,38 @@ services:
         target: /var/www/html
 
   ubooquity:
-    image: linuxserver/ubooquity:amd64-latest
     container_name: ubooquity
+    image: docker.io/linuxserver/ubooquity:amd64-latest
     restart: unless-stopped
-    networks:
-      - net
-    environment:
-      - VIRTUAL_HOST=ubooquity.acme.looniversity
-      - VIRTUAL_PORT=2202
-      - NGINX_PROXY_CONTAINER=nginx-proxy
+    network_mode: host
+#    networks:
+#      - net
+#    environment:
+#      - VIRTUAL_HOST=ubooquity.acme.looniversity
+#      - VIRTUAL_PORT=2202
+#      - NGINX_PROXY_CONTAINER=nginx-proxy
     env_file:
       - .timezone-env
+    ports:
+      - 2202:2202
+      - 2203:2203
     volumes:
       - type: bind
-        source: /srv/ubooquity/config
-        target: /config
+        source: /srv/ubooquity/config/
+        target: /config/
       - type: bind
-        source: /srv/ubooquity/books
-        target: /books
+        source: /srv/ubooquity/books/
+        target: /books/
       - type: bind
-        source: /srv/ubooquity/comics
-        target: /comics
+        source: /srv/ubooquity/comics/
+        target: /comics/
       - type: bind
-        source: /srv/ubooquity/files
-        target: /files
+        source: /srv/ubooquity/files/
+        target: /files/
 
   calibre:
-    image: linuxserver/calibre
     container_name: calibre
+    image: docker.io/linuxserver/calibre
     restart: unless-stopped
     network_mode: host
     env_file:
@@ -89,8 +105,8 @@ services:
       - UMASK_SET=022
     volumes:
       - type: bind
-        source: /srv/calibre
-        target: /config
+        source: /srv/calibre/
+        target: /config/
     ports:
       - 8080:8080
       - 8081:8081
@@ -99,7 +115,7 @@ services:
   # Region System Monitoring
   tsdb:
     container_name: influxdb
-    image: influxdb:latest
+    image: docker.io/influxdb:latest
     restart: always
     network_mode: host
     ports:
@@ -110,51 +126,43 @@ services:
         target: /etc/influxdb/influxdb.conf
         read_only: true
       - type: bind
-        source: /srv/influxdb/data
-        target: /var/lib/influxdb
+        source: /srv/influxdb/data/
+        target: /var/lib/influxdb/
 
   tsdb-ui:
     container_name: chronograf
-    image: chronograf:latest
+    image: docker.io/chronograf:latest
     restart: always
     network_mode: host
     ports:
       - "8888:8888"
     volumes:
       - type: bind
-        source: /srv/chronograf
-        target: /var/lib/chronograf
+        source: /srv/chronograf/
+        target: /var/lib/chronograf/
     environment:
       INFLUXDB_URL: http://0.0.0.0:8086
 
   aggregator:
     container_name: telegraf
-    image: telegraf:latest
+    image: docker.io/telegraf:latest
     restart: always
     network_mode: host
     ports:
       - "8125:8125"
       - "8092:8092"
       - "8094:8094"
-
-  graphing:
-    container_name: grafana
-    image: grafana/grafana:latest
-    network_mode: host
-    ports:
-      - "3000:3000"
     volumes:
       - type: bind
-        source: /srv/grafana
-        target: /srv/grafana
-    depends_on:
-      - "tsdb"
+        source: /srv/telegraf/telegraf.conf
+        target: /etc/telegraf/telegraf.conf
+        read_only: true
   # endregion
 
   #  region Relational DB - Postgresql
   rdb:
     container_name: postgres
-    image: postgres:latest
+    image: docker.io/postgres:latest
     restart: always
     network_mode: host
     ports:
@@ -163,28 +171,27 @@ services:
       - ".postgres-env"
     volumes:
       - type: bind
-        source: /srv/postgresql/data
-        target: /var/lib/postgresql/data
+        source: /srv/postgresql/data/
+        target: /var/lib/postgresql/data/
+  # endregion
 
-  rdb-ui:
-    container_name: pgadmin
-    image: dpage/pgadmin4:latest
-    depends_on:
-      - rdb
+  ddb:
+    container_name: mongo
+    image: docker.io/mongo:4.2.10
+    restart: always
     network_mode: host
     ports:
-      - "5433:5433"
+      - "27017-27019:27017-27019"
     env_file:
-      - ".postgres-env"
+      - ".mongo-env"
     volumes:
       - type: bind
-        source: /srv/pgadmin/data
-        target: /var/lib/pgadmin
-  # endregion
+        source: /srv/mongo/db/
+        target: /data/db/
 
   mqtt:
     container_name: mosquitto
-    image: eclipse-mosquitto:latest
+    image: docker.io/eclipse-mosquitto:latest
     restart: always
     network_mode: host
     ports:
@@ -192,18 +199,18 @@ services:
       - "9001:9001"
     volumes:
       - type: bind
-        source: /srv/mosquitto/config
-        target: /mosquitto/config
+        source: /srv/mosquitto/config/
+        target: /mosquitto/config/
       - type: bind
-        source: /srv/mosquitto/data
-        target: /mosquitto/data
+        source: /srv/mosquitto/data/
+        target: /mosquitto/data/
       - type: bind
-        source: /srv/mosquitto/log
-        target: /mosquitto/log
+        source: /srv/mosquitto/log/
+        target: /mosquitto/log/
 
   radicale:
     container_name: radicale
-    image: tomsquest/docker-radicale
+    image: docker.io/tomsquest/docker-radicale
     restart: unless-stopped
     network_mode: host
     ports:
@@ -222,15 +229,15 @@ services:
       - GID=1000
     volumes:
       - type: bind
-        source: /srv/radicale/data
-        target: /data
+        source: /srv/radicale/data/
+        target: /data/
       - type: bind
-        source: /srv/radicale/config
-        target: /config
+        source: /srv/radicale/config/
+        target: /config/
 
   glances:
     container_name: glances
-    image: nicolargo/glances:latest
+    image: docker.io/nicolargo/glances:latest
     restart: unless-stopped
     network_mode: host
     ports:

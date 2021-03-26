@@ -1,0 +1,24 @@
+  rdb-ui:
+    container_name: pgadmin
+    image: docker.io/dpage/pgadmin4:latest
+    depends_on:
+      - rdb
+    network_mode: host
+    ports:
+      - "5433:5433"
+    env_file:
+      - ".postgres-env"
+    volumes:
+      - type: bind
+        source: /srv/pgadmin/data
+        target: /var/lib/pgadmin
+
+  ddb-ui:
+    container_name: mongo-express
+    image: docker.io/mongo-express:latest
+    restart: always
+    network_mode: host
+    ports:
+      - "27017:27017"
+    env_file:
+      - ".mongo-env"

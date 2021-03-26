@@ -129,20 +129,6 @@
         source: /srv/influxdb/data/
         target: /var/lib/influxdb/
 
-  tsdb-ui:
-    container_name: chronograf
-    image: docker.io/chronograf:latest
-    restart: always
-    network_mode: host
-    ports:
-      - "8888:8888"
-    volumes:
-      - type: bind
-        source: /srv/chronograf/
-        target: /var/lib/chronograf/
-    environment:
-      INFLUXDB_URL: http://0.0.0.0:8086
-
   aggregator:
     container_name: telegraf
     image: docker.io/telegraf:latest

@@ -22,3 +22,17 @@
       - "27017:27017"
     env_file:
       - ".mongo-env"
+
+  tsdb-ui:
+    container_name: chronograf
+    image: docker.io/chronograf:latest
+    restart: always
+    network_mode: host
+    ports:
+      - "8888:8888"
+    volumes:
+      - type: bind
+        source: /srv/chronograf/
+        target: /var/lib/chronograf/
+    environment:
+      INFLUXDB_URL: http://0.0.0.0:8086

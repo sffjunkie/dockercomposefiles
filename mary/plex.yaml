@@ -1,0 +1,28 @@
+    plex:
+        container_name: plex
+        image: plexinc/pms-docker:plexpass
+        network_mode: "host"
+        restart: unless-stopped
+        env_file:
+            - ".timezone"
+            - ".plex-env"
+        volumes:
+            - type: bind
+              source: /srv/plex/config
+              target: /config
+            - type: bind
+              source: /srv/plex/transcode
+              target: /transcode
+            - type: bind
+              source: /media/music
+              target: /data/music
+            - type: bind
+              source: /media/classical
+              target: /data/classical
+        healthcheck:
+            disable: true
+        logging:
+            driver: syslog
+            options:
+                tag: "{{.Name}}"
+                syslog-address: "udp://127.0.0.1:514"

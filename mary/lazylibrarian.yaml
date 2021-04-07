@@ -1,0 +1,25 @@
+    lazylibrarian:
+        container_name: lazylibrarian
+        image: linuxserver/lazylibrarian:latest
+        network_mode: "host"
+        restart: unless-stopped
+        environment:
+            - PUID=1000
+            - GUID=1000
+        env_file:
+            - ".timezone"
+        volumes:
+            - type: bind
+              source: /srv/lazylibrarian/config
+              target: /config
+            - type: bind
+              source: /srv/lazylibrarian/downloads
+              target: /downloads
+            - type: bind
+              source: /srv/lazylibrarian/books
+              target: /books
+            - type: bind
+              source: /srv/lazylibrarian/import
+              target: /import
+#        ports:
+#            - "5299:5299"

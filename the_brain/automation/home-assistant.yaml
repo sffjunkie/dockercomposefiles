@@ -1,0 +1,26 @@
+  homeassistant:
+    container_name: homeassistant-core
+    image: docker.io/homeassistant/home-assistant:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/homeassistant/core
+        target: /config
+      - type: bind
+        source: /srv/homeassistant/ssl
+        target: /ssl
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /media/homeassistant/
+        target: /media
+    devices:
+      - "/dev/serial/by-id/usb-RFXCOM_RFXtrx433_06VTMY2H-if00-port0:/rfxtrx-usb"
+#    logging:
+#      driver: syslog
+#      options:
+#        tag: "{{.Name}}"
+#        syslog-address: "udp://10.44.0.3:514"

@@ -1,0 +1,18 @@
+  mqtt:
+    container_name: mosquitto
+    image: docker.io/eclipse-mosquitto:latest
+    restart: always
+    network_mode: host
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - type: bind
+        source: /srv/mosquitto/config/
+        target: /mosquitto/config/
+      - type: bind
+        source: /srv/mosquitto/data/
+        target: /mosquitto/data/
+      - type: bind
+        source: /srv/mosquitto/log/
+        target: /mosquitto/log/

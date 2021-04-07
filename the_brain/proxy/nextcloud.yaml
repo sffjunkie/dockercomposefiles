@@ -1,0 +1,13 @@
+  nextcloud:
+    container_name: nextcloud
+    image: docker.io/nextcloud:latest
+    restart: unless-stopped
+    networks:
+      - "proxy-net"
+    environment:
+      - VIRTUAL_HOST=nextcloud.acme.looniversity
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    volumes:
+      - type: bind
+        source: /srv/nextcloud
+        target: /var/www/html

@@ -1,0 +1,4 @@
+.*
+!.gitignore
+!.gitattributes
+docker-compose.yaml

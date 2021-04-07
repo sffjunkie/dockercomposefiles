@@ -3,7 +3,7 @@
     image: docker.io/jwilder/nginx-proxy:latest
     restart: always
     networks:
-      - net
+      - "proxy-net"
     ports:
       - "80:80"
       - "443:443"

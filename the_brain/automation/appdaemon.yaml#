@@ -1,0 +1,20 @@
+  appdaemon:
+    container_name: appdaemon
+    image: acockburn/appdaemon:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/appdaemon/config
+        target: /conf
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+    ports:
+      - "5050:5050"
+      - "5000:5000"
+    depends_on:
+      - homeassistant-core
+
+

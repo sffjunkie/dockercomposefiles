@@ -1,3 +1,4 @@
 networks:
-  net:
+  proxy-net:
     external: true
+services:

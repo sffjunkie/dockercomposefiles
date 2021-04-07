@@ -1,0 +1,13 @@
+  mongo:
+    container_name: mongo
+    image: docker.io/mongo:4.2.10
+    restart: always
+    network_mode: host
+    ports:
+      - "27017-27019:27017-27019"
+    env_file:
+      - ".mongo-env"
+    volumes:
+      - type: bind
+        source: /srv/mongo/db/
+        target: /data/db/

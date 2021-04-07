@@ -1,0 +1,14 @@
+  heimdall:
+    container_name: heimdall
+    image: docker.io/linuxserver/heimdall:latest
+    networks:
+      - "proxy-net"
+    environment:
+      - VIRTUAL_HOST=heimdall.acme.looniversity
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    env_file:
+      - ".timezone-env"
+      - ".heimdall-env"
+    volumes:
+      - /srv/heimdall:/config
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+  # region Container Management
+  portainer:
+    container_name: portainer
+    image: docker.io/portainer/portainer-ce:latest
+    network_mode: host
+    command: -H unix:///var/run/docker.sock
+    privileged: true
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /srv/portainer/
+        target: /data/
+  # end region

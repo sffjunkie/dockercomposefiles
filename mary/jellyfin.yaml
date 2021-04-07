@@ -1,0 +1,16 @@
+    jellyfin:
+        container_name: jellyfin
+        image: jellyfin/jellyfin:latest
+        network_mode: "host"
+        restart: unless-stopped
+        user: 1001:1001
+        volumes:
+            - type: bind
+              source: /srv/jellyfin/config
+              target: /config
+            - type: bind
+              source: /srv/jellyfin/cache
+              target: /cache
+            - type: bind
+              source: /media/music
+              target: /media/music

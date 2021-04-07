@@ -1,0 +1,18 @@
+  calibre:
+    container_name: calibre
+    image: docker.io/linuxserver/calibre
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .timezone-env
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - UMASK_SET=022
+    volumes:
+      - type: bind
+        source: /srv/calibre/
+        target: /config/
+    ports:
+      - 8080:8080
+      - 8081:8081

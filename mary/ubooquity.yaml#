@@ -1,0 +1,22 @@
+  ubooquity:
+    container_name: ubooquity
+    image: docker.io/linuxserver/ubooquity:amd64-latest
+    restart: unless-stopped
+    env_file:
+      - .timezone-env
+    ports:
+      - 2202:2202
+      - 2203:2203
+    volumes:
+      - type: bind
+        source: /srv/ubooquity/config/
+        target: /config/
+      - type: bind
+        source: /srv/ubooquity/books/
+        target: /books/
+      - type: bind
+        source: /srv/ubooquity/comics/
+        target: /comics/
+      - type: bind
+        source: /srv/ubooquity/files/
+        target: /files/

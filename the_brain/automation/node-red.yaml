@@ -1,0 +1,11 @@
+  nodered:
+    container_name: nodered
+    image: docker.io/nodered/node-red:latest-12
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - type: bind
+        source: /srv/nodered/data
+        target: /data
+    ports:
+      - "1880:1880"

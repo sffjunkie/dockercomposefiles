@@ -1,0 +1,21 @@
+  deconz:
+    container_name: deconz
+    image: docker.io/marthoc/deconz:latest
+    restart: unless-stopped
+    network_mode: host
+#    command: --upnp=0
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10443:10443"
+    volumes:
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime:ro
+      - type: bind
+        source: /srv/deconz
+        target: /root/.local/share/dresden-elektronik/deCONZ
+    devices:
+      - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/dev/ttyUSB0"
+    env_file:
+      - .deconz-env

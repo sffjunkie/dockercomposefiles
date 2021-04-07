@@ -7,7 +7,7 @@
       - PUID=1000
       - GUID=1000
     env_file:
-      - ".timezone"
+      - ".timezone-env"
     volumes:
       - type: bind
         source: /srv/lazylibrarian/config

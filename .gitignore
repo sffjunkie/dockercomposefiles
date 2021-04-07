@@ -1,4 +1,5 @@
 .*
 !.gitignore
 !.gitattributes
+build
 docker-compose.yaml

@@ -5,7 +5,7 @@
     networks:
       - "proxy-net"
     environment:
-      - VIRTUAL_HOST=nextcloud.acme.looniversity
+      - VIRTUAL_HOST=nextcloud.looniversity.net
       - NGINX_PROXY_CONTAINER=nginx-proxy
     volumes:
       - type: bind

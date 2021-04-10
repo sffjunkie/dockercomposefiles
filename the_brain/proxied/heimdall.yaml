@@ -4,7 +4,7 @@
     networks:
       - "proxy-net"
     environment:
-      - VIRTUAL_HOST=heimdall.acme.looniversity
+      - VIRTUAL_HOST=heimdall.looniversity.net
       - NGINX_PROXY_CONTAINER=nginx-proxy
     env_file:
       - ".timezone-env"

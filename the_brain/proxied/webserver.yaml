@@ -1,0 +1,13 @@
+  webserver:
+    container_name: webserver
+    image: docker.io/nginx:latest
+    networks:
+      - "proxy-net"
+    environment:
+      - VIRTUAL_HOST=www.looniversity.net
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    env_file:
+      - ".timezone-env"
+    volumes:
+      - /srv/webserver:/var/www/html/
+    restart: unless-stopped

@@ -1,6 +1,6 @@
   postgres:
     container_name: postgres
-    image: docker.io/postgres:latest
+    image: docker.io/postgres:12
     restart: always
     network_mode: host
     ports:

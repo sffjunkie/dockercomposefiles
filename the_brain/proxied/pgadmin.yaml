@@ -1,0 +1,14 @@
+  pgadmin:
+    container_name: pgadmin
+    image: docker.io/dpage/pgadmin4:latest
+    networks:
+      - "proxy-net"
+    environment:
+      - VIRTUAL_HOST=pgadmin.looniversity.net
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    env_file:
+      - ".timezone-env"
+      - ".pgadmin-env"
+#    volumes:
+#      - /srv/heimdall:/config
+    restart: unless-stopped

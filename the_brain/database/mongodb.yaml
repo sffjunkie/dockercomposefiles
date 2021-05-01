@@ -1,6 +1,6 @@
   mongo:
     container_name: mongo
-    image: docker.io/mongo:4.2.10
+    image: docker.io/mongo:latest
     restart: always
     network_mode: host
     ports:

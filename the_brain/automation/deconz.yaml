@@ -18,4 +18,4 @@
     devices:
       - "/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM01H10M-if00-port0:/dev/ttyUSB0"
     env_file:
-      - .deconz-env
+      - ".deconz-env"

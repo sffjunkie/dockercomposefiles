@@ -1,0 +1,27 @@
+  # region Container Management
+  vault:
+    container_name: vault
+    image: docker.io/vault:latest
+    network_mode: host
+    command:
+      - "server"
+    ports:
+      - "8200:8200"
+      - "8201:8201"
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - type: bind
+        source: /srv/vault/data/
+        target: /vault/data/
+      - type: bind
+        source: /srv/vault/logs/
+        target: /vault/logs/
+      - type: bind
+        source: /srv/vault/config/
+        target: /vault/config/
+      - type: bind
+        source: /srv/ssl/
+        target: /vault/ssl/
+   # end region
+

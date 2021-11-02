@@ -1,0 +1,15 @@
+  organizr:
+    container_name: organizr
+    image: docker.io/organizr/organizr:latest
+    networks:
+      - "proxy-net"
+    environment:
+      - VIRTUAL_HOST=organizr.looniversity.net
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+      - PUID=1002
+      - PGID=1003
+    env_file:
+      - ".timezone-env"
+    volumes:
+      - /srv/organizr:/config
+    restart: unless-stopped

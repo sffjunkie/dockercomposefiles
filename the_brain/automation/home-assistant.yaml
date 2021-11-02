@@ -8,15 +8,15 @@
         source: /srv/homeassistant/core
         target: /config
       - type: bind
-        source: /srv/homeassistant/ssl
+        source: /srv/ssl
         target: /ssl
       - type: bind
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
       - type: bind
-        source: /media/homeassistant/
-        target: /media
+        source: /mnt/music/
+        target: /media/music
 #    devices:
 #      - "/dev/serial/by-id/usb-RFXCOM_RFXtrx433_06VTMY2H-if00-port0:/rfxtrx-usb"
 #    logging:

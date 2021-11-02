@@ -9,6 +9,5 @@
     env_file:
       - ".timezone-env"
       - ".pgadmin-env"
-#    volumes:
 #      - /srv/heimdall:/config
     restart: unless-stopped
